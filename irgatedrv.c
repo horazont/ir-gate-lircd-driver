@@ -58,11 +58,10 @@ fail:
     return 0;
 }
 
+static int accum = 0;
+static int accum_is_pause = -1;
 
 static lirc_t irgatedrv_readdata(lirc_t timeout) {
-    static int accum = 0;
-    static int accum_is_pause = -1;
-
     // we have to loop here until we get something definitive.
     // luckily, we'll get a 0x00 at the end of the pause after the last pulse
     // we will use that to inject a fake 100ms pause, because lircd will have opinions there, I'm afraid.
@@ -227,6 +226,21 @@ static char* irgatedrv_recv(struct ir_remote *remotes)
     return decode_all(remotes);
 }
 
+static int irgatedrv_deinit() {
+    accum = 0;
+    accum_is_pause = -1;
+    if (drv.fd >= 0) {
+        close(drv.fd);
+        drv.fd = -1;
+    }
+    return 1;
+}
+
+static int irgatedrv_close() {
+    irgatedrv_deinit();
+    return 0;
+}
+
 static const struct driver hw_irgate = {
 	.name		=	"irgatedrv",
 	.device		=	"/dev/ttyAMA0",
@@ -235,9 +249,9 @@ static const struct driver hw_irgate = {
 	.rec_mode	=	LIRC_MODE_MODE2,
 	.code_length	=	0,
 	.init_func	=	irgatedrv_init,
-	.deinit_func	=	NULL,
+	.deinit_func	=	irgatedrv_deinit,
 	.open_func	=	default_open,
-	.close_func	=	default_close,
+	.close_func	=	irgatedrv_close,
 	.send_func	=	irgatedrv_send,
 	.rec_func	=	irgatedrv_recv,
 	.decode_func	=	receive_decode,
