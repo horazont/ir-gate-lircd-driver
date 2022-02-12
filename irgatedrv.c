@@ -85,7 +85,7 @@ static lirc_t irgatedrv_readdata(lirc_t timeout) {
             if (is_pause != accum_is_pause) {
                 int old_accum = accum;
                 int old_accum_is_pause = accum_is_pause;
-                accum = 0;
+                accum = duration_us;
                 accum_is_pause = is_pause;
 
                 if (old_accum_is_pause != -1) {
@@ -103,8 +103,9 @@ static lirc_t irgatedrv_readdata(lirc_t timeout) {
                         return LIRC_PULSE(result);
                     }
                 }
+            } else {
+                accum += duration_us;
             }
-            accum += duration_us;
             continue;
         }
 
