@@ -89,7 +89,7 @@ static lirc_t irgatedrv_readdata(lirc_t timeout) {
                 accum_is_pause = is_pause;
 
                 if (old_accum_is_pause != -1) {
-                    if (old_accum_is_pause == 0 && duration_us == 0 && old_accum > 10000) {
+                    if (old_accum_is_pause == 1 && duration_us == 0 && old_accum > 10000) {
                         // special magic case: this might be the end-of-symbol strobe, so we fudge the duration to be a true end of symbol.
                         old_accum = 100000;
                     }
@@ -97,7 +97,7 @@ static lirc_t irgatedrv_readdata(lirc_t timeout) {
                     if (result == 0) {
                         result += 1;
                     }
-                    if (old_accum_is_pause == 0) {
+                    if (old_accum_is_pause == 1) {
                         return LIRC_SPACE(result);
                     } else {
                         return LIRC_PULSE(result);
