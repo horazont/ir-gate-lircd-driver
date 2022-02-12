@@ -102,6 +102,9 @@ static lirc_t irgatedrv_readdata(lirc_t timeout) {
                     } else {
                         return LIRC_PULSE(result);
                     }
+                } else if (is_pause != 0) {
+                    // inject initial pause
+                    return LIRC_SPACE(100000);
                 }
             } else {
                 accum += duration_us;
