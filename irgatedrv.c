@@ -178,7 +178,6 @@ static int send(const uint8_t is_pause, const int duration_16us) {
     while (full_slots > 0) {
         const int batch = (full_slots > 16 ? 16 : full_slots);
         const uint8_t *buf = is_pause ? pause_buf : pulse_buf;
-        fprintf(stderr, "send %d times %02x\n", batch, buf[0]);
         if (write_blocking(drv.fd, buf, batch) != 0) {
             return -1;
         }
@@ -187,7 +186,6 @@ static int send(const uint8_t is_pause, const int duration_16us) {
 
     if (remainder > 0) {
         const uint8_t code = (remainder << 1) | (is_pause ? 1 : 0);
-        fprintf(stderr, "send: 0x%02x\n", code);
         if (write_blocking(drv.fd, &code, 1) != 0) {
             return -1;
         }
