@@ -116,7 +116,7 @@ static lirc_t irgatedrv_readdata(lirc_t timeout) {
         while ((poll_result = poll(&fd, 1, poll_timeout)) < 1) {
             if (poll_result == 0) {
                 // timeout
-                return LIRC_MODE2_TIMEOUT;
+                return LIRC_MODE2_TIMEOUT | LIRC_VALUE(timeout);
             }
             if (errno != EINTR) {
                 return 0;
